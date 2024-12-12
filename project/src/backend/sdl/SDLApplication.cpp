@@ -131,17 +131,9 @@ namespace lime {
 
 					currentUpdate = SDL_GetTicks ();
 					applicationEvent.type = UPDATE;
-					applicationEvent.deltaTime = currentUpdate - lastUpdate;
+					applicationEvent.deltaTime = (int)(currentUpdate - lastUpdate);
+
 					lastUpdate = currentUpdate;
-
-					nextUpdate += framePeriod;
-
-					while (nextUpdate <= currentUpdate) {
-
-						nextUpdate += framePeriod;
-
-					}
-
 					ApplicationEvent::Dispatch (&applicationEvent);
 					RenderEvent::Dispatch (&renderEvent);
 
@@ -829,7 +821,7 @@ namespace lime {
 	bool timerActive = false;
 	bool firstTime = true;
 
-	Uint32 OnTimer (Uint32 interval, void *) {
+	void PushEvent (void) {
 
 		SDL_Event event;
 		SDL_UserEvent userevent;
@@ -892,15 +884,8 @@ namespace lime {
 		#else
 
 			if (currentUpdate >= nextUpdate) {
-
-				if (timerActive) SDL_RemoveTimer (timerID);
-				OnTimer (0, 0);
-
-			} else if (!timerActive) {
-
-				timerActive = true;
-				timerID = SDL_AddTimer (nextUpdate - currentUpdate, OnTimer, 0);
-
+				PushUpdate();
+				nextUpdate = currentUpdate + framePeriod;
 			}
 
 		}
