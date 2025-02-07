@@ -821,7 +821,8 @@ namespace lime {
 	bool timerActive = false;
 	bool firstTime = true;
 
-	void PushEvent (void) {
+
+	void PushUpdate (void) {
 
 		SDL_Event event;
 		SDL_UserEvent userevent;
@@ -836,9 +837,6 @@ namespace lime {
 		timerID = 0;
 
 		SDL_PushEvent (&event);
-
-		return 0;
-
 	}
 
 
