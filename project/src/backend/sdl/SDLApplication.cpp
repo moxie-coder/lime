@@ -821,8 +821,7 @@ namespace lime {
 	bool timerActive = false;
 	bool firstTime = true;
 
-
-	void PushUpdate (void) {
+	Uint32 OnTimer (Uint32 interval, void *) {
 
 		SDL_Event event;
 		SDL_UserEvent userevent;
@@ -837,6 +836,9 @@ namespace lime {
 		timerID = 0;
 
 		SDL_PushEvent (&event);
+
+		return 0;
+
 	}
 
 
@@ -882,8 +884,15 @@ namespace lime {
 		#else
 
 			if (currentUpdate >= nextUpdate) {
-				PushUpdate();
-				nextUpdate = currentUpdate + framePeriod;
+
+				if (timerActive) SDL_RemoveTimer (timerID);
+				OnTimer (0, 0);
+
+			} else if (!timerActive) {
+
+				timerActive = true;
+				timerID = SDL_AddTimer (nextUpdate - currentUpdate, OnTimer, 0);
+
 			}
 
 		}
